@@ -2,7 +2,8 @@ function setTwins() {
 	var twinsDataAttributes = {
 		target 		: 'twins-target',
 		viewport 	: 'twins-viewport',
-		property 	: 'twins-property'
+		property 	: 'twins-property',
+		interval 	: 'twins-interval'
 	};
 
 	var twins = $('.twins');
@@ -14,14 +15,36 @@ function setTwins() {
 			if(typeof targetName == 'string') {
 				targetName = targetName.replace(', ',',');
 				targetCollection = targetName.split(',');
+
+				var viewport = twins.data(twinsDataAttributes.viewport);
+				var viewportCollection = [];
+				if(typeof viewport != 'undefined') {
+					viewport = viewport.replace(', ',',');
+					viewportCollection = viewport.split(',');
+				}
+
+
+				var interval = twins.data(twinsDataAttributes.interval) ;
+				if(typeof interval != 'number') {
+					interval = 0;
+				}
+
 				if(typeof targetCollection[0] != 'undefined') {
 					//Create a custom trigger so we can update a specific twin target.
 					twins.on({
 						'tipi.twins.update' : function() {
-							for (var i = targetCollection.length - 1; i >= 0; i--) {
+							var duplicateEvent;
+							clearTimeout(duplicateEvent);
+
+							for (var i = 0; i <= targetCollection.length - 1; i++) {
 								var target = twins.find(targetCollection[i]);
 								if(target.length > 0) {
-									duplicateTwinsTarget(twins, target, twinsDataAttributes);
+									if(typeof viewportCollection[i] == 'undefined') {
+										viewport = 0;
+									}
+
+									var timeout = interval * i;
+									duplicateTwinsTarget(twins, target, viewport, timeout, duplicateEvent, twinsDataAttributes);
 								}
 							}
 						}
@@ -44,51 +67,45 @@ function setTwins() {
 	}
 }
 
-function duplicateTwinsTarget(twins, target, twinsDataAttributes) {
-	//Set the default value for the viewport width to 0
-	var viewportWidth = 0;
+function duplicateTwinsTarget(twins, target, viewport, timeout, duplicateEvent, twinsDataAttributes) {
+	duplicateEvent = setTimeout(function() {
+		//Set the default property to 'min-height'.
+		var property = 'min-height';
+		if(typeof twins.data(twinsDataAttributes.property) == 'string') {
+			property = twins.data(twinsDataAttributes.property);
+		}
 
-	//Get the viewportWidth from the data attribute
-	if(typeof twins.data(twinsDataAttributes.viewport) == 'number') {
-		viewportWidth = twins.data(twinsDataAttributes.viewport);
-	}
+		var propertyValues = [];
 
-	//Set the default property to 'min-height'.
-	var property = 'min-height';
-	if(typeof twins.data(twinsDataAttributes.property) == 'string') {
-		property = twins.data(twinsDataAttributes.property);
-	}
+		if(target.length > 0) {
+			target.each(function(index) {
+				var currentTarget = $(this);
+				resetTwinsTarget(currentTarget);
 
-	var propertyValues = [];
-
-	if(target.length > 0) {
-		target.each(function(index) {
-			var currentTarget = $(this);
-			resetTwinsTarget(currentTarget);
-
-			if(property === 'min-width' || property === 'width') {
-				propertyValues.push(currentTarget.outerWidth());
-			} else {
-				propertyValues.push(currentTarget.outerHeight());
-			}
-
-			if(index >= target.length - 1) {
-				//Sort all the heights on a descending order.
-				propertyValues.sort(function(a, b) {
-					return b - a;
-				});
-
-				var properties = {};
-				properties[property] = propertyValues[0];
-
-				if($(window).width() >= viewportWidth && propertyValues[0] > 0) {
-					target.css(properties);
+				if(property === 'min-width' || property === 'width') {
+					propertyValues.push(currentTarget.outerWidth());
 				} else {
-					resetTwinsTarget(target);
+					propertyValues.push(currentTarget.outerHeight());
 				}
-			}
-		});
-	}
+
+				if(index >= target.length - 1) {
+					//Sort all the heights on a descending order.
+					propertyValues.sort(function(a, b) {
+						return b - a;
+					});
+
+					var properties = {};
+					properties[property] = propertyValues[0];
+
+					if($(window).width() >= viewport && propertyValues[0] > 0) {
+						target.css(properties);
+					} else {
+						resetTwinsTarget(target);
+					}
+				}
+			});
+		}
+	}, timeout);
 }
 
 function resetTwinsTarget(currentTarget) {
