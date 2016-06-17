@@ -23,7 +23,6 @@ function setTwins() {
 					viewportCollection = viewport.split(',');
 				}
 
-
 				var interval = twins.data(twinsDataAttributes.interval) ;
 				if(typeof interval != 'number') {
 					interval = 0;
@@ -39,12 +38,13 @@ function setTwins() {
 							for (var i = 0; i <= targetCollection.length - 1; i++) {
 								var target = twins.find(targetCollection[i]);
 								if(target.length > 0) {
+
 									if(typeof viewportCollection[i] == 'undefined') {
-										viewport = 0;
+										viewportCollection[i] = 0;
 									}
 
 									var timeout = interval * i;
-									duplicateTwinsTarget(twins, target, viewport, timeout, duplicateEvent, twinsDataAttributes);
+									duplicateTwinsTarget(twins, target, viewportCollection[i], timeout, duplicateEvent, twinsDataAttributes);
 								}
 							}
 						}
