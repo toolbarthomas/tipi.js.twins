@@ -1,0 +1,16 @@
+{
+  "name": "tipi.plugin.twins",
+  "homepage": "https://github.com/toolbarthomas/tipi.plugin.twins",
+  "authors": [
+    "Thomas van der Velde <contact@toolbarthomas.net>"
+  ],
+  "description": "Javascript function to duplicate css properties on one or more selectors.",
+  "keywords": [
+    "toolbarthomas",
+    "modular",
+    "twins",
+    "duplicate"
+  ],
+  "license": "MIT",
+  "main": "tipi.plugin.twins.js"
+}
