@@ -13,12 +13,22 @@ function setTwins() {
 
 			var targetName = twins.data(twinsDataAttributes.target);
 			if(typeof targetName == 'string') {
+				if (typeof targetName != 'string') {
+					targetName = targetName.toString();
+				}
+
 				targetName = targetName.replace(', ',',');
 				targetCollection = targetName.split(',');
 
 				var viewport = twins.data(twinsDataAttributes.viewport);
 				var viewportCollection = [];
+
 				if(typeof viewport != 'undefined') {
+					//Convert the viewport value to a string so we can replace and split the value
+					if (typeof viewport != 'string') {
+						viewport = viewport.toString();
+					}
+
 					viewport = viewport.replace(', ',',');
 					viewportCollection = viewport.split(',');
 				}
