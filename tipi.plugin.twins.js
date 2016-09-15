@@ -63,11 +63,16 @@ function setTwins() {
 					twins.trigger('tipi.twins.update');
 
 					var twinUpdate;
+					var documentWidth = $(document).width();
 					$(window).on({
 						resize : function() {
 							clearTimeout(twinUpdate);
 							twinUpdate = setTimeout(function() {
-								twins.trigger('tipi.twins.update');
+								if(documentWidth != $(document).width()) {
+									twins.trigger('tipi.twins.update');
+								}
+
+								documentWidth = $(document).width();
 							}, 500);
 						}
 					});
