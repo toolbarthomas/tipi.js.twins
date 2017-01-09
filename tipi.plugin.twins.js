@@ -134,6 +134,9 @@
 				break;
 			}
 
+			//Reset each target so that we can calculate the original height
+			resetTwinsTarget(target);
+
 			//Loop trough all target so we can compare the properties
 			var property_values = [];
 			target.each(function() {
@@ -167,8 +170,6 @@
 
 			if(win.width() >= viewport) {
 				target.css(properties);
-			} else {
-				resetTwinsTarget(target);
 			}
 		}
 	}
